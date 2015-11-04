@@ -3,6 +3,13 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     concat: {
+      options: {
+        separator: ';',
+      },
+      dist: {
+        src: 'public/client/*.js',
+        dest: 'public/dist/build.js'
+      }
     },
 
     mochaTest: {
@@ -21,24 +28,36 @@ module.exports = function(grunt) {
     },
 
     uglify: {
+      build: {
+        src: 'public/dist/build.js',
+        dest: 'public/dist/build.min.js'
+      }
     },
 
     jshint: {
       files: [
         // Add filespec list here
+        'public/client/*.js',
+        'app/**/*.js',
+        'test/**/*.js'
       ],
       options: {
         force: 'true',
         jshintrc: '.jshintrc',
         ignores: [
-          'public/lib/**/*.js',
-          'public/dist/**/*.js'
+          'public/lib/*.js',
+          'public/dist/*.js'
         ]
       }
     },
 
     cssmin: {
-        // Add filespec list here
+      // Add filespec list here
+      target: {
+        files: [
+          'public/*.css'
+        ]
+      }
     },
 
     watch: {
