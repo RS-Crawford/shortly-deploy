@@ -53,10 +53,9 @@ module.exports = function(grunt) {
 
     cssmin: {
       // Add filespec list here
-      target: {
-        files: [
-          'public/*.css'
-        ]
+      build: {
+        src: 'public/*.css',
+        dest: 'public/style.min.css'
       }
     },
 
@@ -105,15 +104,16 @@ module.exports = function(grunt) {
     grunt.task.run([ 'watch' ]);
   });
 
-  ////////////////////////////////////////////////////
-  // Main grunt tasks
-  ////////////////////////////////////////////////////
+  ////////////////////////
+  //  Main grunt tasks  //
+  ////////////////////////
 
   grunt.registerTask('test', [
     'mochaTest'
   ]);
 
   grunt.registerTask('build', [
+    'jshint', 'concat', 'uglify', 'cssmin'
   ]);
 
   grunt.registerTask('upload', function(n) {
@@ -126,6 +126,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('deploy', [
       // add your production server task here
+      'build', 'nodemon'
   ]);
 
 
