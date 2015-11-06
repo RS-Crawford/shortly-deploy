@@ -1,17 +1,14 @@
 var mongoose = require('mongoose');
-var connection = mongoose.connect('localhost:27017/test');
+mongoose.connect('mongodb://localhost/shortlydb');
 
-module.exports = connection;
-// link up to models here
-// if exists statement?
-exports.userSchema = mongoose.Schema({
-  // need to put in incrementing ID (maybe?)
-  username: String,
-  password: String
-});
+var db = mongoose.connection;
 
+db.on('error', console.error.bind(console, 'connection error: '));
+db.once('open', function() {
+  console.log('MongoDB connection open');
+})
 
-// if exists statement?
+module.exports = db;
 
 // var Bookshelf = require('bookshelf');
 // var path = require('path');

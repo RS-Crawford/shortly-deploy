@@ -1,25 +1,37 @@
-var db = require('../config');
+var mongoose = require('mongoose');
 var bcrypt = require('bcrypt-nodejs');
 var Promise = require('bluebird');
 
-var userSchema = db.Schema({
-  username: String,
+var userSchema = mongoose.Schema({
+  username: { type: String, index: {unique: true} },
   password: String
 });
 
+var User = mongoose.model('User', userSchema);
+
+User.prototype.comparePassword = function(attemptedPassword, callback) {
+  bcrypt.compare(attemptedPassword, this.password, function(err, isMatch) {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, isMatch);
+    }
+  });
+};
+
 // update to adjust model
-userSchema.pre('creating', function(next) {
+userSchema.pre('save', function(next) {
   var cipher = Promise.promisify(bcrypt.hash);
-  return cipher(this.get('password'), null, null).bind(this)
+  return cipher(this.password, null, null).bind(this)
     .then(function(hash) {
-      this.set('password', hash);
+      this.password = hash;
+      next();
     });
-  next();
 });
 
-var User = db.model('User', userSchema);
 
 module.exports = User;
+
 // var User = db.Model.extend({
 //   tableName: 'users',
 //   hasTimestamps: true,
@@ -39,4 +51,3 @@ module.exports = User;
 //       });
 //   }
 // });
-
